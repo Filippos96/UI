@@ -79,20 +79,23 @@ struct ProfileView: View {
 }
 
 struct GaugeProgressStyle: ProgressViewStyle {
-    var strokeColor = Color.blue
+    var strokeColor = Color.black
     var strokeWidth = 25.0
 
     func makeBody(configuration: Configuration) -> some View {
         let fractionCompleted = configuration.fractionCompleted ?? 0
-
+        
         return ZStack {
-            Path { path in
-                path.move(to: CGPoint(x: 100, y: 0))
-                path.addLine(to: CGPoint(x: 300, y: 0))
-            }
+            RoundedRectangle(cornerRadius: 10)
+                Path { path in
+                    path.move(to: CGPoint(x: 100, y: 0))
+                    path.addLine(to: CGPoint(x: 300, y: 0))
+                }
                 .trim(from: 0, to: fractionCompleted)
                 .stroke(strokeColor, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
+            
         }
+        
     }
 }
 

@@ -9,8 +9,8 @@ import SwiftUI
 
 struct AchievementsView: View {
     let achievements = [
-        Achievement(title: "Level 2", isAchieved: false, category: "Progress", description: "Reach level 2"),
-        Achievement(title: "Level 3", isAchieved: true, category: "Progress", description: "Heloer")
+        Achievement(title: "Level 2", isAchieved: true, category: "Progress", description: "Reach level 2"),
+        Achievement(title: "Level 3", isAchieved: false, category: "Progress", description: "Reach level 3")
         ]
     var body: some View {
         ZStack(alignment: .top){
@@ -27,12 +27,22 @@ struct AchievementsView: View {
                 ScrollView(.vertical) {
                     VStack(spacing: 20) {
                         ForEach(achievements) { achievement in
-                            VStack{
-                                Text(achievement.title)
-                                Text(achievement.category)
-                                Text(achievement.description)
-                                    .font(.subheadline)
-                            }
+                            
+                            ZStack{
+                                if achievement.isAchieved == false{
+                                    Text("LOCKED")
+                                        .foregroundColor(.white)
+                                        .font(.system(size: 50))
+                                        .rotationEffect(.degrees(-30))
+                                        .opacity(0.9)
+                                }
+                                VStack{
+                                    Text(achievement.title)
+                                    Text(achievement.category)
+                                    Text(achievement.description)
+                                        .font(.subheadline)
+                                }
+                                
                                 .foregroundColor(.white)
                                 .font(.largeTitle)
                                 .frame(width: 300, height: 150)
@@ -50,7 +60,12 @@ struct AchievementsView: View {
                                     .opacity(0.5)
                                     
                                 )
+                                .opacity(achievement.isAchieved ? 1 : 0.3)
+                                
+                            }
+                            
                         }
+                        
                     }
                 }
             }
