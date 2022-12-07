@@ -54,12 +54,7 @@ struct TaskView: View {
                     
                     PickerFrequency(selectedFrequency: $selectedPriority)
                     
-                    Text(currentDay ?? "no day")
-                    Text(currentDay ?? "no day")
                     
-                    if dayHasChanged(){
-                        Text("newDay")
-                    }
                     
                     List{
                         ForEach(tasks, id: \.self) { item in
@@ -96,8 +91,7 @@ struct TaskView: View {
                 .foregroundColor(.black)
             }
             .onAppear{
-                //setDayToZero()
-                currentDay = getDate()
+                updateTasksWhenNewDay()
             }
         }
     }
@@ -114,23 +108,44 @@ func getDate() -> String{
     
 }
 
-func dayHasChanged() -> Bool{
+func dayHasChanged(){
     let date = Date()
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "dd"
     let dateInString = dateFormatter.string(from: date)
     
+    print(dateInString)
+    
     if dateInString != UserDefaults.standard.string(forKey: "day"){
-        saveDate()
-        print(true)
-        return true
+        //Set all daily task Completions to false
+        print("New Day")
+        
+        
     }
-    print(false)
-    return false
 }
-
-func setDayToZero(){
-    UserDefaults.standard.set("00", forKey: "day")
+func weekHasChanged(){
+    let date = Date()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "ww"
+    let dateInString = dateFormatter.string(from: date)
+    
+    if dateInString != UserDefaults.standard.string(forKey: "week"){
+        //Set all wekkly task Completions to false
+        
+        print("New week")
+    }
+}
+func monthHasChanged(){
+    let date = Date()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "MM"
+    let dateInString = dateFormatter.string(from: date)
+    
+    if dateInString != UserDefaults.standard.string(forKey: "month"){
+        //Set all monthly task Completions to false
+        
+        print("New Month")
+    }
 }
 
 func saveDate(){
@@ -151,6 +166,21 @@ func saveDate(){
     UserDefaults.standard.set(WeekInString, forKey: "week")
     UserDefaults.standard.set(MonthInString, forKey: "month")
 }
+
+func updateTasksWhenNewDay(){
+    dayHasChanged()
+    weekHasChanged()
+    monthHasChanged()
+    saveDate()
+}
+
+
+
+func setDayToZero(){
+    UserDefaults.standard.set("00", forKey: "day")
+}
+
+
 
 struct TaskView_Previews: PreviewProvider {
     static var previews: some View {
