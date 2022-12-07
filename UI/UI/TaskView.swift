@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TaskView: View {
     @State var selectedPriority: FrequencyPicker = .daily
+    @AppStorage ("currentDay") var currentDay: String?
     
     init(){
         UISegmentedControl.appearance().selectedSegmentTintColor = .white
@@ -18,10 +19,14 @@ struct TaskView: View {
     }
     
     var body: some View {
+        
+        
+        
         let tasks = ["one", "two", "three"]
         NavigationStack{
             
             ZStack(alignment: .top){
+                
                 
                 Image("bg")
                     .resizable()
@@ -48,10 +53,15 @@ struct TaskView: View {
                     
                     
                     PickerFrequency(selectedFrequency: $selectedPriority)
-                        
+                    
+                    Text(currentDay ?? "no day")
+                    Text(currentDay ?? "no day")
+                    
+                    if dayHasChanged(){
+                        Text("newDay")
+                    }
                     
                     List{
-                        
                         ForEach(tasks, id: \.self) { item in
                             HStack{
                                 Image(systemName: "circle")
@@ -62,10 +72,7 @@ struct TaskView: View {
                         .listRowBackground(Color.clear)
                     }
                     .scrollContentBackground(.hidden)
-                    
-
                 }
-                
                 .navigationTitle("Daily Discipline")
                 
                 .navigationBarTitleDisplayMode(.inline)
@@ -77,28 +84,73 @@ struct TaskView: View {
                         } label: {
                             Label("Add Item", systemImage: "gearshape.fill")
                         }
-                        
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
                         NavigationLink {
                             //NewTestView()
                         } label: {
                             Image(systemName: "person.fill")
-                            
                         }
-                        
                     }
-                    
-                    
                 }
                 .foregroundColor(.black)
-                
+            }
+            .onAppear{
+                //setDayToZero()
+                currentDay = getDate()
             }
         }
     }
 }
 
+func getDate() -> String{
+    let date = Date()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd"
+    let dateInString = dateFormatter.string(from: date)
+    
+    print(dateInString)
+    return dateInString
+    
+}
 
+func dayHasChanged() -> Bool{
+    let date = Date()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "dd"
+    let dateInString = dateFormatter.string(from: date)
+    
+    if dateInString != UserDefaults.standard.string(forKey: "day"){
+        saveDate()
+        print(true)
+        return true
+    }
+    print(false)
+    return false
+}
+
+func setDayToZero(){
+    UserDefaults.standard.set("00", forKey: "day")
+}
+
+func saveDate(){
+    let date = Date()
+    let dateFormatterToDay = DateFormatter()
+    let dateFormatterToWeek = DateFormatter()
+    let dateFormatterToMonth = DateFormatter()
+    
+    dateFormatterToDay.dateFormat = "dd"
+    dateFormatterToWeek.dateFormat = "ww"
+    dateFormatterToMonth.dateFormat = "MM"
+    
+    let dayInString = dateFormatterToDay.string(from: date)
+    let WeekInString = dateFormatterToWeek.string(from: date)
+    let MonthInString = dateFormatterToMonth.string(from: date)
+    
+    UserDefaults.standard.set(dayInString, forKey: "day")
+    UserDefaults.standard.set(WeekInString, forKey: "week")
+    UserDefaults.standard.set(MonthInString, forKey: "month")
+}
 
 struct TaskView_Previews: PreviewProvider {
     static var previews: some View {
